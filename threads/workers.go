@@ -21,7 +21,7 @@ func Worker(wg *sync.WaitGroup, appContext *context.AppContext) {
 		if err != nil {
 			appContext.DebugLogger.High(fmt.Sprintf("failed to send request, %s", err))
 		}
-		if code != 200 {
+		if code == 200 {
 			appContext.RequestLogger.High(fmt.Sprintf("%d: %s/%s", code, request.URL, request.Path))
 		} else {
 			appContext.RequestLogger.Low(fmt.Sprintf("%d: %s/%s", code, request.URL, request.Path))
@@ -31,9 +31,9 @@ func Worker(wg *sync.WaitGroup, appContext *context.AppContext) {
 
 func Start(appContext *context.AppContext) {
 	var wg sync.WaitGroup
-	wg.Add(appContext.AppConfig.Threads)
+	wg.Add(appContext.AppConfig.WorkerConfig.Threads)
 
-	for i := 0; i < appContext.AppConfig.Threads; i++ {
+	for i := 0; i < appContext.AppConfig.WorkerConfig.Threads; i++ {
 		go Worker(&wg, appContext)
 	}
 	wg.Wait()

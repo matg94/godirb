@@ -26,7 +26,7 @@ func main() {
 		DebugLogger:    debugLogger,
 	}
 
-	config.ReadAndCompileWordLists(appContext.Queue, appConfig.WordLists, []string{})
+	config.ReadAndCompileWordLists(appContext.Queue, appConfig.WorkerConfig.WordLists, []string{}, []string{})
 
 	threads.Start(appContext)
 
