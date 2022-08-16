@@ -34,7 +34,7 @@ func CreateLogger(debug bool, outputFile string) *Logger {
 func (log *Logger) Low(message string) {
 	log.Logs = append(log.Logs, Log{
 		content:   message,
-		timestamp: time.Now().String(),
+		timestamp: time.Now().Local().Format(time.RFC822Z),
 		debug:     true,
 	})
 }
@@ -54,12 +54,14 @@ func (log *Logger) Output() error {
 			return err
 		}
 		defer file.Close()
+		var output string
 		for _, lg := range log.Logs {
 			if !log.Debug && lg.debug {
 				continue
 			}
-			ioutil.WriteFile(log.OutputFile, []byte(lg.toString()), 0644)
+			output += lg.toString() + "\n"
 		}
+		ioutil.WriteFile(log.OutputFile, []byte(output), 0644)
 	} else {
 		for _, lg := range log.Logs {
 			if !log.Debug && lg.debug {

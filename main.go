@@ -11,8 +11,8 @@ import (
 
 func main() {
 	appConfig := config.LoadConfig("test")
-	requestLogger := logger.CreateLogger(false, "")
-	debugLogger := logger.CreateLogger(false, "")
+	requestLogger := logger.CreateLogger(appConfig.LoggingConfig.Debug, "")
+	debugLogger := logger.CreateLogger(appConfig.LoggingConfig.Debug, "log.txt")
 	requestGenerator := &requests.RequestGenerator{
 		BaseURL: "http://google.com",
 	}

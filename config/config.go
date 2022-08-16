@@ -19,7 +19,6 @@ type WorkerConfig struct {
 	Append      []string `yaml:"append"`
 	IgnoreCodes []int    `yaml:"ignore"`
 	Threads     int      `yaml:"max_threads"`
-	MaxRPS      int      `yaml:"max_rps"`
 }
 
 type LoggingConfig struct {

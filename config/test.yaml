@@ -9,7 +9,6 @@ worker:
     - 401
     - 500
   max_threads: 5
-  max_rps: 10
 logging:
   debug: False
 requests:

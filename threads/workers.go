@@ -6,6 +6,7 @@ import (
 
 	"github.com/matg94/godirb/context"
 	"github.com/matg94/godirb/data"
+	"github.com/matg94/godirb/util"
 )
 
 func Worker(wg *sync.WaitGroup, appContext *context.AppContext) {
@@ -21,10 +22,10 @@ func Worker(wg *sync.WaitGroup, appContext *context.AppContext) {
 		if err != nil {
 			appContext.DebugLogger.High(fmt.Sprintf("failed to send request, %s", err))
 		}
-		if code == 200 {
-			appContext.RequestLogger.High(fmt.Sprintf("%d: %s/%s", code, request.URL, request.Path))
+		if code != 404 || util.ListContains(code, appContext.AppConfig.WorkerConfig.IgnoreCodes) {
+			appContext.RequestLogger.High(fmt.Sprintf("%d - %s/%s", code, request.URL, request.Path))
 		} else {
-			appContext.RequestLogger.Low(fmt.Sprintf("%d: %s/%s", code, request.URL, request.Path))
+			appContext.RequestLogger.Low(fmt.Sprintf("%d - %s/%s", code, request.URL, request.Path))
 		}
 	}
 }
