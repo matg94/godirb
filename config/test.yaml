@@ -1,0 +1,21 @@
+worker:
+  wordlists:
+    - /home/mat/documents/godirb/config/test.txt
+  append: 
+    - .html
+    - .txt
+  ignore: 
+    - 403
+    - 401
+    - 500
+  max_threads: 5
+  max_rps: 10
+logging:
+  debug: False
+requests:
+  cookie: abcdefg
+  headers:
+  - header: Authorization
+    content: Bearer 123
+  - header: Content-Type
+    content: application/json
