@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -8,13 +9,18 @@ import (
 )
 
 type Log struct {
-	content   string
-	timestamp string
-	debug     bool
+	ThreadId  int    `json:"threadId"`
+	Content   string `json:"message"`
+	Timestamp string `json:"timestamp"`
+	Debug     bool   `json:"levelDebug"`
 }
 
-func (log *Log) toString() string {
-	return fmt.Sprintf("%s: %s", log.timestamp, log.content)
+func (log *Log) toJSON() string {
+	res, err := json.Marshal(&log)
+	if err != nil {
+		return "{\"error\": \"parsing json logs error\"}"
+	}
+	return string(res)
 }
 
 type Logger struct {
@@ -31,19 +37,21 @@ func CreateLogger(debug bool, outputFile string) *Logger {
 	}
 }
 
-func (log *Logger) Low(message string) {
+func (log *Logger) Low(thread int, message string) {
 	log.Logs = append(log.Logs, Log{
-		content:   message,
-		timestamp: time.Now().Local().Format(time.RFC822Z),
-		debug:     true,
+		ThreadId:  thread,
+		Content:   message,
+		Timestamp: time.Now().Local().Format(time.RFC822Z),
+		Debug:     true,
 	})
 }
 
-func (log *Logger) High(message string) {
+func (log *Logger) High(thread int, message string) {
 	log.Logs = append(log.Logs, Log{
-		content:   message,
-		timestamp: time.Now().Local().Format(time.RFC822Z),
-		debug:     false,
+		ThreadId:  thread,
+		Content:   message,
+		Timestamp: time.Now().Local().Format(time.RFC822Z),
+		Debug:     false,
 	})
 }
 
@@ -56,18 +64,18 @@ func (log *Logger) Output() error {
 		defer file.Close()
 		var output string
 		for _, lg := range log.Logs {
-			if !log.Debug && lg.debug {
+			if !log.Debug && lg.Debug {
 				continue
 			}
-			output += lg.toString() + "\n"
+			output += lg.toJSON() + "\n"
 		}
 		ioutil.WriteFile(log.OutputFile, []byte(output), 0644)
 	} else {
 		for _, lg := range log.Logs {
-			if !log.Debug && lg.debug {
+			if !log.Debug && lg.Debug {
 				continue
 			}
-			fmt.Println(lg.toString())
+			fmt.Println(lg.toJSON())
 		}
 	}
 	return nil

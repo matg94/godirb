@@ -3,13 +3,13 @@ worker:
     - /home/mat/documents/godirb/config/test.txt
   append: 
     - .html
-    - .txt
+    - .php
   ignore: 
     - 403
     - 401
-    - 500
-  max_threads: 5
+  max_threads: 50
 logging:
+  enabled: True
   debug: False
 requests:
   cookie: abcdefg

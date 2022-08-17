@@ -6,27 +6,24 @@ import (
 
 	"github.com/matg94/godirb/context"
 	"github.com/matg94/godirb/data"
-	"github.com/matg94/godirb/util"
 )
 
-func Worker(wg *sync.WaitGroup, appContext *context.AppContext) {
+func Worker(wg *sync.WaitGroup, appContext *context.AppContext, id int) {
 	for {
 		request, err := appContext.RequestManager.GetNextRequest(appContext.Queue)
 		if err == data.ErrEmptyQueue {
-			appContext.DebugLogger.Low("empty queue: ending thread")
+			appContext.DebugLogger.Low(id, "empty queue: ending thread")
 			wg.Done()
 			return
 		}
-		appContext.DebugLogger.High(fmt.Sprintf("sending: %s/%s", request.URL, request.Path))
+		appContext.DebugLogger.Low(id, fmt.Sprintf("sending: %s/%s", request.URL, request.Path))
 		code, err := request.Send()
 		if err != nil {
-			appContext.DebugLogger.High(fmt.Sprintf("failed to send request, %s", err))
+			appContext.RequestLogger.Log(code, request.URL, request.Path)
+			appContext.DebugLogger.High(id, fmt.Sprintf("failed to send request, %s", err))
 		}
-		if code != 404 || util.ListContains(code, appContext.AppConfig.WorkerConfig.IgnoreCodes) {
-			appContext.RequestLogger.High(fmt.Sprintf("%d - %s/%s", code, request.URL, request.Path))
-		} else {
-			appContext.RequestLogger.Low(fmt.Sprintf("%d - %s/%s", code, request.URL, request.Path))
-		}
+		// TODO: move this logic to the output.go
+		appContext.RequestLogger.Log(code, request.URL, request.Path)
 	}
 }
 
@@ -35,7 +32,7 @@ func Start(appContext *context.AppContext) {
 	wg.Add(appContext.AppConfig.WorkerConfig.Threads)
 
 	for i := 0; i < appContext.AppConfig.WorkerConfig.Threads; i++ {
-		go Worker(&wg, appContext)
+		go Worker(&wg, appContext, i+1)
 	}
 	wg.Wait()
 }

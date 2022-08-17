@@ -11,10 +11,10 @@ import (
 
 func main() {
 	appConfig := config.LoadConfig("test")
-	requestLogger := logger.CreateLogger(appConfig.LoggingConfig.Debug, "")
+	requestLogger := logger.CreateOutput()
 	debugLogger := logger.CreateLogger(appConfig.LoggingConfig.Debug, "log.txt")
 	requestGenerator := &requests.RequestGenerator{
-		BaseURL: "http://google.com",
+		BaseURL: "http://localhost",
 	}
 	wordQueue := data.CreateWordQueue()
 
@@ -26,10 +26,10 @@ func main() {
 		DebugLogger:    debugLogger,
 	}
 
-	config.ReadAndCompileWordLists(appContext.Queue, appConfig.WorkerConfig.WordLists, []string{}, []string{})
+	config.ReadAndCompileWordLists(appContext.Queue, appConfig.WorkerConfig.WordLists, []string{}, appContext.AppConfig.WorkerConfig.Append)
 
 	threads.Start(appContext)
 
-	requestLogger.Output()
+	requestLogger.OutputPretty()
 	debugLogger.Output()
 }
