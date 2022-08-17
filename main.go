@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/matg94/godirb/config"
 	"github.com/matg94/godirb/context"
 	"github.com/matg94/godirb/data"
@@ -27,6 +29,8 @@ func main() {
 	}
 
 	config.ReadAndCompileWordLists(appContext.Queue, appConfig.WorkerConfig.WordLists, []string{}, appContext.AppConfig.WorkerConfig.Append)
+
+	fmt.Println("Queue: ", wordQueue.GetAll())
 
 	threads.Start(appContext)
 

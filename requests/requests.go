@@ -15,6 +15,7 @@ type RequestGenerator struct {
 }
 
 func (rm *RequestGenerator) GetNextRequest(queue *data.WordQueue) (Request, error) {
+	// TODO: Fix sometimes not all words being sent
 	nextWord, err := queue.Next()
 	if err == data.ErrEmptyQueue {
 		return Request{}, err

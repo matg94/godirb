@@ -7,10 +7,10 @@ worker:
   ignore: 
     - 403
     - 401
-  max_threads: 50
+  max_threads: 15
 logging:
   enabled: True
-  debug: False
+  debug: True
 requests:
   cookie: abcdefg
   headers:

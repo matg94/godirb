@@ -1,6 +1,9 @@
 package logger
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 type RequestResult struct {
 	Code    int    `json:"code"`
@@ -10,6 +13,7 @@ type RequestResult struct {
 
 type Outputter struct {
 	Results []RequestResult
+	mut     sync.Mutex
 }
 
 func CreateOutput() *Outputter {
@@ -19,6 +23,8 @@ func CreateOutput() *Outputter {
 }
 
 func (out *Outputter) Log(Code int, BaseUrl, Path string) {
+	out.mut.Lock()
+	defer out.mut.Unlock()
 	out.Results = append(out.Results, RequestResult{
 		Code:    Code,
 		BaseURL: BaseUrl,
@@ -29,11 +35,7 @@ func (out *Outputter) Log(Code int, BaseUrl, Path string) {
 func (out *Outputter) GetStats() map[int]int {
 	responses := map[int]int{}
 	for _, res := range out.Results {
-		if _, found := responses[res.Code]; found {
-			responses[res.Code] += 1
-		} else {
-			responses[res.Code] = 0
-		}
+		responses[res.Code] += 1
 	}
 	return responses
 }

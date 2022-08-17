@@ -1,0 +1,35 @@
+{"threadId":15,"message":"sending: http://localhost/one.html","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":7,"message":"sending: http://localhost/one.php","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":6,"message":"sending: http://localhost/two.php","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":11,"message":"sending: http://localhost/index.html","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":8,"message":"sending: http://localhost/index.php","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":9,"message":"sending: http://localhost/login.html","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":12,"message":"sending: http://localhost/login.php","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":3,"message":"sending: http://localhost/two.html","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":5,"message":"sending: http://localhost/logout.html","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":4,"message":"sending: http://localhost/logout.php","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":1,"message":"empty queue: ending thread","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":2,"message":"empty queue: ending thread","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":10,"message":"empty queue: ending thread","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":13,"message":"empty queue: ending thread","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":14,"message":"empty queue: ending thread","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":11,"message":"received: 404 - http://localhost/index.html","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":11,"message":"empty queue: ending thread","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":7,"message":"received: 404 - http://localhost/one.php","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":3,"message":"received: 404 - http://localhost/two.html","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":7,"message":"empty queue: ending thread","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":3,"message":"empty queue: ending thread","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":9,"message":"received: 404 - http://localhost/login.html","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":9,"message":"empty queue: ending thread","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":15,"message":"received: 404 - http://localhost/one.html","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":15,"message":"empty queue: ending thread","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":5,"message":"received: 404 - http://localhost/logout.html","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":5,"message":"empty queue: ending thread","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":6,"message":"received: 404 - http://localhost/two.php","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":6,"message":"empty queue: ending thread","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":12,"message":"received: 200 - http://localhost/login.php","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":12,"message":"empty queue: ending thread","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":4,"message":"received: 200 - http://localhost/logout.php","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":4,"message":"empty queue: ending thread","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":8,"message":"received: 200 - http://localhost/index.php","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}
+{"threadId":8,"message":"empty queue: ending thread","timestamp":"17 Aug 22 16:39 +0100","levelDebug":true}

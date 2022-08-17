@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"sync"
 	"time"
 )
 
@@ -24,6 +25,7 @@ func (log *Log) toJSON() string {
 }
 
 type Logger struct {
+	mut        sync.Mutex
 	Debug      bool
 	OutputFile string
 	Logs       []Log
@@ -38,6 +40,8 @@ func CreateLogger(debug bool, outputFile string) *Logger {
 }
 
 func (log *Logger) Low(thread int, message string) {
+	log.mut.Lock()
+	defer log.mut.Unlock()
 	log.Logs = append(log.Logs, Log{
 		ThreadId:  thread,
 		Content:   message,
@@ -47,6 +51,8 @@ func (log *Logger) Low(thread int, message string) {
 }
 
 func (log *Logger) High(thread int, message string) {
+	log.mut.Lock()
+	defer log.mut.Unlock()
 	log.Logs = append(log.Logs, Log{
 		ThreadId:  thread,
 		Content:   message,

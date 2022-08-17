@@ -18,7 +18,8 @@ func Worker(wg *sync.WaitGroup, appContext *context.AppContext, id int) {
 		}
 		appContext.DebugLogger.Low(id, fmt.Sprintf("sending: %s/%s", request.URL, request.Path))
 		code, err := request.Send()
-		if err != nil {
+		appContext.DebugLogger.Low(id, fmt.Sprintf("received: %d - %s/%s", code, request.URL, request.Path))
+		if err != nil || code == -1 {
 			appContext.RequestLogger.Log(code, request.URL, request.Path)
 			appContext.DebugLogger.High(id, fmt.Sprintf("failed to send request, %s", err))
 		}
