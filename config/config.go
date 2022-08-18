@@ -22,8 +22,9 @@ type WorkerConfig struct {
 }
 
 type LoggingConfig struct {
-	Debug bool `yaml:"debug"`
-	Json  bool `yaml:"json"`
+	DisplayLive bool `yaml:"display_live"`
+	Debug       bool `yaml:"debug"`
+	Json        bool `yaml:"json"`
 }
 
 type RequestConfig struct {

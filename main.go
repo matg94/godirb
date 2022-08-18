@@ -13,7 +13,7 @@ import (
 
 func main() {
 	appConfig := config.LoadConfig("test")
-	requestLogger := logger.CreateOutput()
+	requestLogger := logger.CreateOutput(appConfig.LoggingConfig.DisplayLive)
 	debugLogger := logger.CreateLogger(appConfig.LoggingConfig.Debug, "log.txt")
 	requestGenerator := &requests.RequestGenerator{
 		BaseURL: "http://localhost",
@@ -30,10 +30,16 @@ func main() {
 
 	config.ReadAndCompileWordLists(appContext.Queue, appConfig.WorkerConfig.WordLists, []string{}, appContext.AppConfig.WorkerConfig.Append)
 
-	fmt.Println("Queue: ", wordQueue.GetAll())
+	// fmt.Println(wordQueue.GetAll())
+
+	fmt.Println("-------------------------------")
+	fmt.Println("Words Generated: ", len(wordQueue.GetAll()))
+	fmt.Println("-------------------------------")
 
 	threads.Start(appContext)
 
+	fmt.Println("-------------------------------")
 	requestLogger.OutputPretty()
+	fmt.Println("-------------------------------")
 	debugLogger.Output()
 }

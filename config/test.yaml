@@ -1,16 +1,19 @@
 worker:
   wordlists:
     - /home/mat/documents/godirb/config/test.txt
-  append: 
-    - .html
-    - .php
+  # append: 
+  #   - .html
+  #   - .php
+  #   - .css
+  #   - .js
   ignore: 
     - 403
     - 401
-  max_threads: 15
+  max_threads: 5000
 logging:
   enabled: True
   debug: True
+  display_live: True
 requests:
   cookie: abcdefg
   headers:
