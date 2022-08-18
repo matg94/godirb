@@ -6,10 +6,10 @@ worker:
   #   - .php
   #   - .css
   #   - .js
-  ignore: 
-    - 403
-    - 401
-  max_threads: 5000
+  # ignore: 
+  #   - 403
+  #   - 401
+  max_threads: 500
 logging:
   enabled: True
   debug: True
