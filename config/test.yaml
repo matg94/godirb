@@ -9,9 +9,9 @@ worker:
     - .php
     - .css
     - .js
-  # ignore: 
-  #   - 403
-  #   - 401
+  ignore: 
+    - 403
+    - 401
   max_threads: 3
 requests:
   cookie: abcdefg
@@ -23,7 +23,7 @@ requests:
 logging:
   stats: True
   debug_logger:
-    file: ./debug_logs.json
+    file: ./debug.json
     json_dump: False
     live: False
   success_logger:
@@ -31,5 +31,6 @@ logging:
     json_dump: False
     live: True
   error_logger:
+    file: ./errors.json
     json_dump: False
     live: False
