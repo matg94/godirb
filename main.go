@@ -9,7 +9,12 @@ import (
 	"github.com/matg94/godirb/logger"
 	"github.com/matg94/godirb/requests"
 	"github.com/matg94/godirb/threads"
+	"github.com/matg94/godirb/timer"
 )
+
+func CreateLoggers(config *config.AppConfig) (*logger.ThreadSafeLogger, *logger.ThreadSafeLogger, *logger.ThreadSafeLogger) {
+	successRequestLogger := &logger.CreateThreadSafeLogger(config.logging)
+}
 
 func main() {
 	appConfig := config.LoadConfig("test")
@@ -36,9 +41,14 @@ func main() {
 	fmt.Println("Words Generated: ", len(wordQueue.GetAll()))
 	fmt.Println("-------------------------------")
 
+	mainTimer := timer.CreateTimer()
+	mainTimer.Start()
 	threads.Start(appContext)
 
+	mainTimer.Stop()
+
 	fmt.Println("-------------------------------")
+	fmt.Println("Time taken:", mainTimer.GetRunTime().Seconds(), "seconds")
 	requestLogger.OutputPretty()
 	fmt.Println("-------------------------------")
 	debugLogger.Output()

@@ -1,19 +1,18 @@
 worker:
+  limiter:
+    enabled: True
+    requests_per_second: 100 
   wordlists:
     - /home/mat/documents/godirb/config/test.txt
-  # append: 
-  #   - .html
-  #   - .php
-  #   - .css
-  #   - .js
+  append: 
+    - .html
+    - .php
+    - .css
+    - .js
   # ignore: 
   #   - 403
   #   - 401
-  max_threads: 500
-logging:
-  enabled: True
-  debug: True
-  display_live: True
+  max_threads: 10
 requests:
   cookie: abcdefg
   headers:
@@ -21,3 +20,20 @@ requests:
     content: Bearer 123
   - header: Content-Type
     content: application/json
+logging:
+  progress_bar: False
+  debug_logger:
+    enabled: True
+    file: ./logs.txt
+    json: True
+    live: False
+  success_logger:
+    enabled: True
+    file: ./ok.txt
+    json: False
+    live: True
+  error_logger:
+    enabled: True
+    file: ./err.json
+    json: True
+    live: False

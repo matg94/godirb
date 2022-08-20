@@ -9,6 +9,18 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+type LimiterConfig struct {
+	Enabled           bool `yaml:"enabled"`
+	RequestsPerSecond int  `yaml:"requests_per_second"`
+}
+
+type LoggerTypeConfig struct {
+	Enabled bool   `yaml:"enabled"`
+	File    string `yaml:"file"`
+	Json    bool   `yaml:"json"`
+	Live    bool   `yaml:"live"`
+}
+
 type HeaderConfig struct {
 	Header  string `yaml:"header"`
 	Content string `yaml:"content"`
@@ -22,9 +34,10 @@ type WorkerConfig struct {
 }
 
 type LoggingConfig struct {
-	DisplayLive bool `yaml:"display_live"`
-	Debug       bool `yaml:"debug"`
-	Json        bool `yaml:"json"`
+	ProgressBar   bool             `yaml:"progress_bar"`
+	DebugLogger   LoggerTypeConfig `yaml:"debug_logger"`
+	SuccessLogger LoggerTypeConfig `yaml:"success_logger"`
+	ErrorLogger   LoggerTypeConfig `yaml:"error_logger"`
 }
 
 type RequestConfig struct {

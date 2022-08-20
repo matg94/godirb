@@ -1,7 +1,10 @@
 package logger
 
 import (
+	"errors"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"sync"
 )
 
@@ -58,4 +61,22 @@ func (out *Outputter) OutputPretty() {
 	for v, k := range responses {
 		fmt.Printf("%d : %d\n", v, k)
 	}
+}
+
+func (out *Outputter) OutputFile(file string) error {
+	if file != "" {
+		f, err := os.Create(file)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+		var output string
+		for _, lg := range out.Results {
+			output += lg.toString() + "\n"
+		}
+		ioutil.WriteFile(file, []byte(output), 0644)
+	} else {
+		return errors.New("output file was not given")
+	}
+	return nil
 }
