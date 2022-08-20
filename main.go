@@ -6,6 +6,7 @@ import (
 	"github.com/matg94/godirb/config"
 	"github.com/matg94/godirb/context"
 	"github.com/matg94/godirb/data"
+	"github.com/matg94/godirb/limiter"
 	"github.com/matg94/godirb/logger"
 	"github.com/matg94/godirb/requests"
 	"github.com/matg94/godirb/threads"
@@ -26,11 +27,13 @@ func main() {
 		BaseURL: "http://localhost",
 	}
 	wordQueue := data.CreateWordQueue()
+	requestLimiter := limiter.CreateRequestLimiter(appConfig.WorkerConfig.Limiter.RequestsPerSecond)
 
 	appContext := &context.AppContext{
 		AppConfig:      appConfig,
 		RequestManager: requestGenerator,
 		Queue:          wordQueue,
+		Limiter:        requestLimiter,
 		SuccessLogger:  successLogger,
 		ErrorLogger:    errorLogger,
 		DebugLogger:    debugLogger,
@@ -53,6 +56,8 @@ func main() {
 	if appConfig.LoggingConfig.Stats {
 		fmt.Println("-------------------------------")
 		fmt.Println("Time taken:", mainTimer.GetRunTime().Seconds(), "seconds")
+		fmt.Println("Total Hits:", requestLimiter.TotalHits)
+		fmt.Println("Final Rate:", requestLimiter.CalculateCurrentRate())
 		fmt.Println("-------------------------------")
 	}
 	debugLogger.Output()

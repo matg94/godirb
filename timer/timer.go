@@ -6,6 +6,7 @@ type ProgramTimer interface {
 	Start()
 	Stop()
 	GetRunTime() time.Duration
+	GetCurrentTime() time.Duration
 }
 
 type Timer struct {
@@ -27,4 +28,8 @@ func (t *Timer) Stop() {
 
 func (t *Timer) GetRunTime() time.Duration {
 	return t.endTime.Sub(t.startTime)
+}
+
+func (t *Timer) GetCurrentTime() time.Duration {
+	return time.Now().Sub(t.startTime)
 }

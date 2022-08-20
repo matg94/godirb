@@ -10,8 +10,8 @@ import (
 )
 
 type LimiterConfig struct {
-	Enabled           bool `yaml:"enabled"`
-	RequestsPerSecond int  `yaml:"requests_per_second"`
+	Enabled           bool    `yaml:"enabled"`
+	RequestsPerSecond float64 `yaml:"requests_per_second"`
 }
 
 type LoggerTypeConfig struct {
@@ -26,10 +26,11 @@ type HeaderConfig struct {
 }
 
 type WorkerConfig struct {
-	WordLists   []string `yaml:"wordlists"`
-	Append      []string `yaml:"append"`
-	IgnoreCodes []int    `yaml:"ignore"`
-	Threads     int      `yaml:"max_threads"`
+	Limiter     LimiterConfig `yaml:"limiter"`
+	WordLists   []string      `yaml:"wordlists"`
+	Append      []string      `yaml:"append"`
+	IgnoreCodes []int         `yaml:"ignore"`
+	Threads     int           `yaml:"max_threads"`
 }
 
 type LoggingConfig struct {

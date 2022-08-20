@@ -17,7 +17,10 @@ func Worker(wg *sync.WaitGroup, appContext *context.AppContext, id int, client *
 			wg.Done()
 			return
 		}
+
+		appContext.Limiter.AwaitPermission()
 		code, err := request.Send(client)
+		appContext.Limiter.Hit()
 
 		if err != nil || code == -1 {
 			appContext.ErrorLogger.Log(&RequestLog{
