@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"sync"
+
+	"github.com/matg94/godirb/config"
 )
 
 type Loggable interface {
@@ -17,60 +19,55 @@ type Loggable interface {
 var ErrInvalidFile error = errors.New("could not write to given file")
 
 type ThreadSafeLogger struct {
-	Logs       []Loggable
-	OutputLive bool
-	mut        sync.Mutex
+	Logs     []Loggable
+	JsonDump bool
+	Live     bool
+	Filepath string
+	mut      sync.Mutex
 }
 
-func CreateThreadSafeLogger(live bool) *ThreadSafeLogger {
+func CreateThreadSafeLogger(config config.LoggerTypeConfig) *ThreadSafeLogger {
 	return &ThreadSafeLogger{
-		Logs:       []Loggable{},
-		OutputLive: live,
-		mut:        sync.Mutex{},
+		Logs:     []Loggable{},
+		JsonDump: config.JsonDump,
+		Live:     config.Live,
+		Filepath: config.File,
+		mut:      sync.Mutex{},
 	}
 }
 
-func (logger *ThreadSafeLogger) Output(asJson bool) {
-	out := os.Stdout
+func (logger *ThreadSafeLogger) OutputString(writer io.Writer) {
 	for _, log := range logger.Logs {
-		if asJson {
-			fmt.Fprintln(out, log.ToJSON())
-			continue
-		}
-		fmt.Fprintln(out, log.ToString())
+		fmt.Fprintln(writer, log.ToString())
 	}
 }
 
-func (logger *ThreadSafeLogger) OutputToFile(asJson bool, filepath string) error { // TODO: Add JSON functionality (make whole file json)
-	if filepath != "" {
-		f, err := os.Create(filepath)
+func (logger *ThreadSafeLogger) OutputJSON(writer io.Writer) error {
+	jsonString, err := json.Marshal(logger.Logs)
+	if err != nil {
+		return err
+	}
+	fmt.Fprint(writer, string(jsonString))
+	return nil
+}
+
+func (logger *ThreadSafeLogger) Output() error {
+	if logger.Filepath != "" {
+		file, err := os.Create(logger.Filepath)
 		if err != nil {
 			return err
 		}
-		defer f.Close()
+		defer file.Close()
 
-		if asJson {
-			jsonString, err := json.Marshal(logger.Logs)
-			if err != nil {
-				return err
-			}
-			err = ioutil.WriteFile(filepath, jsonString, 0644)
-			if err != nil {
-				return err
-			}
-		} else {
-			var output string
-			for _, lg := range logger.Logs {
-				output += lg.ToString() + "\n"
-			}
-			err := ioutil.WriteFile(filepath, []byte(output), 0644)
-			if err != nil {
-				return err
-			}
+		err = logger.OutputJSON(file)
+		if err != nil {
+			return err
 		}
-	} else {
-		return ErrInvalidFile
 	}
+	if logger.JsonDump {
+		logger.OutputJSON(os.Stdout)
+	}
+
 	return nil
 }
 
@@ -79,7 +76,7 @@ func (logger *ThreadSafeLogger) Log(log Loggable) {
 	defer logger.mut.Unlock()
 
 	logger.Logs = append(logger.Logs, log)
-	if !logger.OutputLive {
+	if !logger.Live {
 		return
 	}
 	fmt.Println(log.ToString())

@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/matg94/godirb/config"
 )
 
 type TestLog struct {
@@ -31,7 +33,12 @@ func ReadFile(filepath string) ([]byte, error) {
 }
 
 func TestAddLog(t *testing.T) {
-	logger := CreateThreadSafeLogger(false)
+	conf := config.LoggerTypeConfig{
+		File:     "",
+		Live:     false,
+		JsonDump: false,
+	}
+	logger := CreateThreadSafeLogger(conf)
 	testLog := &TestLog{
 		Message: "test",
 		Value:   1,
@@ -43,41 +50,19 @@ func TestAddLog(t *testing.T) {
 	}
 }
 
-func TestOutputToFile(t *testing.T) {
-	logger := CreateThreadSafeLogger(false)
-	testLog := &TestLog{
-		Message: "test",
-		Value:   1,
-	}
-	logger.Log(testLog)
-	err := logger.OutputToFile(false, "testlog.txt")
-
-	if err != nil {
-		t.Log("expected no errors but got", err)
-		t.Fail()
-	}
-
-	data, err := ReadFile("testlog.txt")
-	if err != nil {
-		t.Log("expected no errors reading file but got", err)
-		t.Fail()
-	}
-
-	if string(data) != (testLog.ToString() + "\n") {
-		t.Logf("expected file contents to match '%s' (plus new line) but got '%s'", testLog.ToString(), string(data))
-		t.Fail()
-	}
-	os.Remove("testlog.txt")
-}
-
 func TestOutputToFileJSON(t *testing.T) {
-	logger := CreateThreadSafeLogger(false)
+	conf := config.LoggerTypeConfig{
+		File:     "testlog.json",
+		Live:     false,
+		JsonDump: false,
+	}
+	logger := CreateThreadSafeLogger(conf)
 	testLog := &TestLog{
 		Message: "test",
 		Value:   1,
 	}
 	logger.Log(testLog)
-	err := logger.OutputToFile(true, "testlog.json")
+	err := logger.Output()
 
 	if err != nil {
 		t.Log("expected no errors but got", err)
@@ -97,17 +82,23 @@ func TestOutputToFileJSON(t *testing.T) {
 	os.Remove("testlog.json")
 }
 
-func TestOutputToFileInvalidFileGivesError(t *testing.T) {
-	logger := CreateThreadSafeLogger(false)
-	testLog := &TestLog{
-		Message: "test",
-		Value:   1,
-	}
-	logger.Log(testLog)
-	err := logger.OutputToFile(false, "")
+// func TestOutputToFileInvalidFileGivesError(t *testing.T) {
+// 	conf := config.LoggerTypeConfig{
+// 		Enabled: true,
+// 		File:    "",
+// 		Json:    false,
+// 		Live:    false,
+// 	}
+// 	logger := CreateThreadSafeLogger(conf)
+// 	testLog := &TestLog{
+// 		Message: "test",
+// 		Value:   1,
+// 	}
+// 	logger.Log(testLog)
+// 	err := logger.Output()
 
-	if err != ErrInvalidFile {
-		t.Log("expected invalid file error but got", err)
-		t.Fail()
-	}
-}
+// 	if err != ErrInvalidFile {
+// 		t.Log("expected invalid file error but got", err)
+// 		t.Fail()
+// 	}
+// }

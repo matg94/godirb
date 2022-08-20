@@ -1,7 +1,6 @@
 package threads
 
 import (
-	"fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -15,21 +14,34 @@ func Worker(wg *sync.WaitGroup, appContext *context.AppContext, id int, client *
 	for {
 		request, err := appContext.RequestManager.GetNextRequest(appContext.Queue)
 		if err == data.ErrEmptyQueue {
-			appContext.DebugLogger.Low(id, "empty queue: ending thread")
 			wg.Done()
 			return
 		}
-		appContext.DebugLogger.Low(id, fmt.Sprintf("sending: %s/%s", request.URL, request.Path))
 		code, err := request.Send(client)
-		appContext.DebugLogger.Low(id, fmt.Sprintf("received: %d - %s/%s", code, request.URL, request.Path))
 
 		if err != nil || code == -1 {
-			appContext.RequestLogger.Log(code, request.URL, request.Path, false)
-			appContext.DebugLogger.High(id, fmt.Sprintf("failed to send request, %s", err))
+			appContext.ErrorLogger.Log(&RequestLog{
+				Code:    code,
+				BaseURL: request.URL,
+				Path:    request.Path,
+			})
+			appContext.DebugLogger.Log(&DebugLog{
+				ThreadId: id,
+				Location: "getting request response",
+				Error:    err,
+			})
 		} else if code == 404 || util.ListContains(code, appContext.AppConfig.WorkerConfig.IgnoreCodes) {
-			appContext.RequestLogger.Log(code, request.URL, request.Path, false)
+			appContext.ErrorLogger.Log(&RequestLog{
+				Code:    code,
+				BaseURL: request.URL,
+				Path:    request.Path,
+			})
 		} else {
-			appContext.RequestLogger.Log(code, request.URL, request.Path, true)
+			appContext.SuccessLogger.Log(&RequestLog{
+				Code:    code,
+				BaseURL: request.URL,
+				Path:    request.Path,
+			})
 		}
 	}
 }

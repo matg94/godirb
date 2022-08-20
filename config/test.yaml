@@ -21,19 +21,15 @@ requests:
   - header: Content-Type
     content: application/json
 logging:
-  progress_bar: False
+  stats: True
   debug_logger:
-    enabled: True
-    file: ./logs.txt
-    json: True
+    file: ./debug_logs.json
+    json_dump: False
     live: False
   success_logger:
-    enabled: True
-    file: ./ok.txt
-    json: False
+    file: ./oks.json
+    json_dump: False
     live: True
   error_logger:
-    enabled: True
-    file: ./err.json
-    json: True
+    json_dump: False
     live: False

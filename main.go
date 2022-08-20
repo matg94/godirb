@@ -13,13 +13,15 @@ import (
 )
 
 func CreateLoggers(config *config.AppConfig) (*logger.ThreadSafeLogger, *logger.ThreadSafeLogger, *logger.ThreadSafeLogger) {
-	successRequestLogger := &logger.CreateThreadSafeLogger(config.logging)
+	successLogger := logger.CreateThreadSafeLogger(config.LoggingConfig.SuccessLogger)
+	errorLogger := logger.CreateThreadSafeLogger(config.LoggingConfig.ErrorLogger)
+	debugLogger := logger.CreateThreadSafeLogger(config.LoggingConfig.DebugLogger)
+	return successLogger, errorLogger, debugLogger
 }
 
 func main() {
 	appConfig := config.LoadConfig("test")
-	requestLogger := logger.CreateOutput(appConfig.LoggingConfig.DisplayLive)
-	debugLogger := logger.CreateLogger(appConfig.LoggingConfig.Debug, "log.txt")
+	successLogger, errorLogger, debugLogger := CreateLoggers(appConfig)
 	requestGenerator := &requests.RequestGenerator{
 		BaseURL: "http://localhost",
 	}
@@ -29,17 +31,18 @@ func main() {
 		AppConfig:      appConfig,
 		RequestManager: requestGenerator,
 		Queue:          wordQueue,
-		RequestLogger:  requestLogger,
+		SuccessLogger:  successLogger,
+		ErrorLogger:    errorLogger,
 		DebugLogger:    debugLogger,
 	}
 
 	config.ReadAndCompileWordLists(appContext.Queue, appConfig.WorkerConfig.WordLists, []string{}, appContext.AppConfig.WorkerConfig.Append)
 
-	// fmt.Println(wordQueue.GetAll())
-
-	fmt.Println("-------------------------------")
-	fmt.Println("Words Generated: ", len(wordQueue.GetAll()))
-	fmt.Println("-------------------------------")
+	if appConfig.LoggingConfig.Stats {
+		fmt.Println("-------------------------------")
+		fmt.Println("Words Generated: ", len(wordQueue.GetAll()))
+		fmt.Println("-------------------------------")
+	}
 
 	mainTimer := timer.CreateTimer()
 	mainTimer.Start()
@@ -47,9 +50,20 @@ func main() {
 
 	mainTimer.Stop()
 
-	fmt.Println("-------------------------------")
-	fmt.Println("Time taken:", mainTimer.GetRunTime().Seconds(), "seconds")
-	requestLogger.OutputPretty()
-	fmt.Println("-------------------------------")
+	if appConfig.LoggingConfig.Stats {
+		fmt.Println("-------------------------------")
+		fmt.Println("Time taken:", mainTimer.GetRunTime().Seconds(), "seconds")
+		fmt.Println("-------------------------------")
+	}
 	debugLogger.Output()
+	successLogger.Output()
+	errorLogger.Output()
 }
+
+// func (out *Outputter) GetStats() map[int]int {
+// 	responses := map[int]int{}
+// 	for _, res := range out.Results {
+// 		responses[res.Code] += 1
+// 	}
+// 	return responses
+// }

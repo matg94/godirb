@@ -15,10 +15,9 @@ type LimiterConfig struct {
 }
 
 type LoggerTypeConfig struct {
-	Enabled bool   `yaml:"enabled"`
-	File    string `yaml:"file"`
-	Json    bool   `yaml:"json"`
-	Live    bool   `yaml:"live"`
+	File     string `yaml:"file"`
+	Live     bool   `yaml:"live"`
+	JsonDump bool   `yaml:"json_dump"`
 }
 
 type HeaderConfig struct {
@@ -34,7 +33,7 @@ type WorkerConfig struct {
 }
 
 type LoggingConfig struct {
-	ProgressBar   bool             `yaml:"progress_bar"`
+	Stats         bool             `yaml:"stats"`
 	DebugLogger   LoggerTypeConfig `yaml:"debug_logger"`
 	SuccessLogger LoggerTypeConfig `yaml:"success_logger"`
 	ErrorLogger   LoggerTypeConfig `yaml:"error_logger"`
