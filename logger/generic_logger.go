@@ -36,12 +36,6 @@ func CreateThreadSafeLogger(config config.LoggerTypeConfig) *ThreadSafeLogger {
 	}
 }
 
-func (logger *ThreadSafeLogger) OutputString(writer io.Writer) {
-	for _, log := range logger.Logs {
-		fmt.Fprintln(writer, log.ToString())
-	}
-}
-
 func (logger *ThreadSafeLogger) OutputJSON(writer io.Writer) error {
 	jsonString, err := json.Marshal(logger.Logs)
 	if err != nil {
@@ -51,7 +45,7 @@ func (logger *ThreadSafeLogger) OutputJSON(writer io.Writer) error {
 	return nil
 }
 
-func (logger *ThreadSafeLogger) Output() error {
+func (logger *ThreadSafeLogger) Output(writer io.Writer) error {
 	if logger.Filepath != "" {
 		file, err := os.Create(logger.Filepath)
 		if err != nil {
@@ -65,7 +59,7 @@ func (logger *ThreadSafeLogger) Output() error {
 		}
 	}
 	if logger.JsonDump {
-		err := logger.OutputJSON(os.Stdout)
+		err := logger.OutputJSON(writer)
 		if err != nil {
 			return err
 		}
@@ -82,5 +76,5 @@ func (logger *ThreadSafeLogger) Log(log Loggable) {
 	if !logger.Live {
 		return
 	}
-	fmt.Println(log.ToString())
+	fmt.Fprint(os.Stdout, log.ToString()+"\n")
 }

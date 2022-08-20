@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/matg94/godirb/config"
 	"github.com/matg94/godirb/context"
@@ -64,18 +65,18 @@ func main() {
 
 	if appConfig.LoggingConfig.Stats {
 		fmt.Println("-------------------------------")
-		appContext.ResultMap.Print()
+		appContext.ResultMap.Print(os.Stdout)
 		fmt.Println("-------------------------------")
 		fmt.Println("Time taken:", mainTimer.GetRunTime().Seconds(), "seconds")
 		fmt.Println("Total Hits:", int(requestLimiter.TotalHits))
 		fmt.Println("Final Rate:", int(requestLimiter.CalculateCurrentRate()), "requests per second")
 		fmt.Println("-------------------------------")
 	}
-	err := debugLogger.Output()
+	err := debugLogger.Output(os.Stdout)
 	HandleFatalErr(err)
-	err = successLogger.Output()
+	err = successLogger.Output(os.Stdout)
 	HandleFatalErr(err)
-	err = errorLogger.Output()
+	err = errorLogger.Output(os.Stdout)
 	HandleFatalErr(err)
 
 }

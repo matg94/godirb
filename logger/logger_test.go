@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -62,7 +63,7 @@ func TestOutputToFileJSON(t *testing.T) {
 		Value:   1,
 	}
 	logger.Log(testLog)
-	err := logger.Output()
+	err := logger.Output(os.Stdout)
 
 	if err != nil {
 		t.Log("expected no errors but got", err)
@@ -82,23 +83,50 @@ func TestOutputToFileJSON(t *testing.T) {
 	os.Remove("testlog.json")
 }
 
-// func TestOutputToFileInvalidFileGivesError(t *testing.T) {
-// 	conf := config.LoggerTypeConfig{
-// 		Enabled: true,
-// 		File:    "",
-// 		Json:    false,
-// 		Live:    false,
-// 	}
-// 	logger := CreateThreadSafeLogger(conf)
-// 	testLog := &TestLog{
-// 		Message: "test",
-// 		Value:   1,
-// 	}
-// 	logger.Log(testLog)
-// 	err := logger.Output()
+func TestOutputJSONDump(t *testing.T) {
+	conf := config.LoggerTypeConfig{
+		Live:     false,
+		JsonDump: true,
+	}
+	logger := CreateThreadSafeLogger(conf)
+	testLog := &TestLog{
+		Message: "test",
+		Value:   1,
+	}
+	logger.Log(testLog)
+	var b bytes.Buffer
+	if err := logger.Output(&b); err != nil {
+		t.Log("expected no errors but got", err)
+		t.Fail()
+	}
+	got := b.String()
+	expected := "[{\"message\":\"test\",\"value\":1}]"
+	if got != expected {
+		t.Logf("expected output to be %q, but got %q", expected, got)
+		t.Fail()
+	}
+}
 
-// 	if err != ErrInvalidFile {
-// 		t.Log("expected invalid file error but got", err)
-// 		t.Fail()
-// 	}
-// }
+func TestOutputLive(t *testing.T) {
+	conf := config.LoggerTypeConfig{
+		Live:     false,
+		JsonDump: true,
+	}
+	logger := CreateThreadSafeLogger(conf)
+	testLog := &TestLog{
+		Message: "test",
+		Value:   1,
+	}
+	logger.Log(testLog)
+	var b bytes.Buffer
+	if err := logger.Output(&b); err != nil {
+		t.Log("expected no errors but got", err)
+		t.Fail()
+	}
+	got := b.String()
+	expected := "[{\"message\":\"test\",\"value\":1}]"
+	if got != expected {
+		t.Logf("expected output to be %q, but got %q", expected, got)
+		t.Fail()
+	}
+}

@@ -2,7 +2,7 @@ package logger
 
 import (
 	"fmt"
-	"os"
+	"io"
 	"sync"
 	"text/tabwriter"
 )
@@ -29,8 +29,8 @@ func (r *RequestCounterMap) Add(key int) {
 	r.Map[key] += 1
 }
 
-func (r *RequestCounterMap) Print() {
-	w := tabwriter.NewWriter(os.Stdout, 1, 1, 1, ' ', 0)
+func (r *RequestCounterMap) Print(writer io.Writer) {
+	w := tabwriter.NewWriter(writer, 1, 1, 1, ' ', 0)
 	fmt.Fprintln(w, "Code\t|\tCount")
 	fmt.Fprintln(w, "-----\t|\t-----")
 	for k, v := range r.Map {
