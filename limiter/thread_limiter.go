@@ -7,7 +7,7 @@ import (
 )
 
 type ThreadLimiter interface {
-	AwaitPermission()
+	AwaitPermission() bool
 	CalculateCurrentRate() float64
 	Hit()
 }
@@ -30,13 +30,14 @@ func CreateRequestLimiter(maxRate float64, enabled bool) *RequestThreadLimiter {
 	}
 }
 
-func (limiter *RequestThreadLimiter) AwaitPermission() {
+func (limiter *RequestThreadLimiter) AwaitPermission() bool {
 	if !limiter.Enabled {
-		return
+		return false
 	}
 	for limiter.CalculateCurrentRate() >= limiter.MaxRate {
 		time.Sleep(time.Duration(1000/limiter.MaxRate) * time.Millisecond)
 	}
+	return true
 }
 
 func (limiter *RequestThreadLimiter) Hit() {

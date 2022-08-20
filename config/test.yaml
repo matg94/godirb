@@ -1,7 +1,7 @@
 worker:
   limiter:
     enabled: False
-    requests_per_second: 500
+    requests_per_second: 30000
   wordlists:
     - /home/mat/documents/godirb/config/test.txt
   append: 
