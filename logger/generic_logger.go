@@ -65,7 +65,10 @@ func (logger *ThreadSafeLogger) Output() error {
 		}
 	}
 	if logger.JsonDump {
-		logger.OutputJSON(os.Stdout)
+		err := logger.OutputJSON(os.Stdout)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/matg94/godirb/config"
 	"github.com/matg94/godirb/context"
@@ -12,6 +13,12 @@ import (
 	"github.com/matg94/godirb/threads"
 	"github.com/matg94/godirb/timer"
 )
+
+func HandleFatalErr(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 func CreateLoggers(config *config.AppConfig) (*logger.ThreadSafeLogger, *logger.ThreadSafeLogger, *logger.ThreadSafeLogger) {
 	successLogger := logger.CreateThreadSafeLogger(config.LoggingConfig.SuccessLogger)
@@ -27,7 +34,8 @@ func main() {
 		BaseURL: "http://localhost",
 	}
 	wordQueue := data.CreateWordQueue()
-	requestLimiter := limiter.CreateRequestLimiter(appConfig.WorkerConfig.Limiter.RequestsPerSecond)
+	requestLimiter := limiter.CreateRequestLimiter(appConfig.WorkerConfig.Limiter.RequestsPerSecond, appConfig.WorkerConfig.Limiter.Enabled)
+	threadSafeMap := logger.CreateRequestCounterMap()
 
 	appContext := &context.AppContext{
 		AppConfig:      appConfig,
@@ -37,6 +45,7 @@ func main() {
 		SuccessLogger:  successLogger,
 		ErrorLogger:    errorLogger,
 		DebugLogger:    debugLogger,
+		ResultMap:      threadSafeMap,
 	}
 
 	config.ReadAndCompileWordLists(appContext.Queue, appConfig.WorkerConfig.WordLists, []string{}, appContext.AppConfig.WorkerConfig.Append)
@@ -55,20 +64,18 @@ func main() {
 
 	if appConfig.LoggingConfig.Stats {
 		fmt.Println("-------------------------------")
+		appContext.ResultMap.Print()
+		fmt.Println("-------------------------------")
 		fmt.Println("Time taken:", mainTimer.GetRunTime().Seconds(), "seconds")
-		fmt.Println("Total Hits:", requestLimiter.TotalHits)
-		fmt.Println("Final Rate:", requestLimiter.CalculateCurrentRate())
+		fmt.Println("Total Hits:", int(requestLimiter.TotalHits))
+		fmt.Println("Final Rate:", int(requestLimiter.CalculateCurrentRate()), "requests per second")
 		fmt.Println("-------------------------------")
 	}
-	debugLogger.Output()
-	successLogger.Output()
-	errorLogger.Output()
-}
+	err := debugLogger.Output()
+	HandleFatalErr(err)
+	err = successLogger.Output()
+	HandleFatalErr(err)
+	err = errorLogger.Output()
+	HandleFatalErr(err)
 
-// func (out *Outputter) GetStats() map[int]int {
-// 	responses := map[int]int{}
-// 	for _, res := range out.Results {
-// 		responses[res.Code] += 1
-// 	}
-// 	return responses
-// }
+}

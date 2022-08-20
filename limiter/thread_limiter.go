@@ -13,15 +13,17 @@ type ThreadLimiter interface {
 }
 
 type RequestThreadLimiter struct {
+	Enabled   bool
 	TotalHits int
 	Timer     timer.ProgramTimer
 	MaxRate   float64
 }
 
-func CreateRequestLimiter(maxRate float64) *RequestThreadLimiter {
+func CreateRequestLimiter(maxRate float64, enabled bool) *RequestThreadLimiter {
 	timer := timer.CreateTimer()
 	timer.Start()
 	return &RequestThreadLimiter{
+		Enabled:   enabled,
 		TotalHits: 0,
 		Timer:     timer,
 		MaxRate:   maxRate,
@@ -29,6 +31,9 @@ func CreateRequestLimiter(maxRate float64) *RequestThreadLimiter {
 }
 
 func (limiter *RequestThreadLimiter) AwaitPermission() {
+	if !limiter.Enabled {
+		return
+	}
 	for limiter.CalculateCurrentRate() >= limiter.MaxRate {
 		time.Sleep(time.Duration(1000/limiter.MaxRate) * time.Millisecond)
 	}

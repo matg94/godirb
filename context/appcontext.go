@@ -16,4 +16,5 @@ type AppContext struct {
 	SuccessLogger  *logger.ThreadSafeLogger
 	ErrorLogger    *logger.ThreadSafeLogger
 	DebugLogger    *logger.ThreadSafeLogger
+	ResultMap      *logger.RequestCounterMap
 }

@@ -31,5 +31,5 @@ func (t *Timer) GetRunTime() time.Duration {
 }
 
 func (t *Timer) GetCurrentTime() time.Duration {
-	return time.Now().Sub(t.startTime)
+	return time.Since(t.startTime)
 }

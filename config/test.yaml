@@ -1,6 +1,6 @@
 worker:
   limiter:
-    enabled: True
+    enabled: False
     requests_per_second: 500
   wordlists:
     - /home/mat/documents/godirb/config/test.txt
@@ -12,7 +12,7 @@ worker:
   # ignore: 
   #   - 403
   #   - 401
-  max_threads: 50
+  max_threads: 3
 requests:
   cookie: abcdefg
   headers:
