@@ -7,12 +7,13 @@ import (
 
 	"github.com/matg94/godirb/context"
 	"github.com/matg94/godirb/data"
+	"github.com/matg94/godirb/requests"
 	"github.com/matg94/godirb/util"
 )
 
 func Worker(wg *sync.WaitGroup, appContext *context.AppContext, id int, client *http.Client) {
 	for {
-		request, err := appContext.RequestManager.GetNextRequest(appContext.Queue)
+		request, err := requests.GetNextRequest(appContext.Queue, appContext.BaseURL, appContext.AppConfig.RequestConfig)
 		if err == data.ErrEmptyQueue {
 			wg.Done()
 			return

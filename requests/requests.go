@@ -6,25 +6,17 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/matg94/godirb/config"
 	"github.com/matg94/godirb/data"
 )
 
-type RequestGenerator struct {
-	BaseURL string
-	Headers []config.HeaderConfig
-	Cookie  string
-	Client  *http.Client
-}
-
-func (rm *RequestGenerator) GetNextRequest(queue *data.WordQueue) (*Request, error) {
+func GetNextRequest(queue *data.WordQueue, baseURL string, conf config.RequestConfig) (*Request, error) {
 	nextWord, err := queue.Next()
 	if err == data.ErrEmptyQueue {
 		return &Request{}, err
 	}
-	return CreateRequest(rm.BaseURL, nextWord, rm.Cookie, rm.Headers), nil
+	return CreateRequest(baseURL, nextWord, conf), nil
 }
 
 type Request struct {
@@ -32,14 +24,6 @@ type Request struct {
 	Path    string
 	Headers []config.HeaderConfig
 	Cookie  string
-}
-
-type Timer struct {
-	startTime time.Time
-}
-
-func (t *Timer) Time(code string) {
-	fmt.Println("Time: ", time.Since(t.startTime), " Code: ", code)
 }
 
 func (r *Request) Send(client *http.Client) (int, error) {
@@ -59,11 +43,11 @@ func (r *Request) Send(client *http.Client) (int, error) {
 	return resp.StatusCode, nil
 }
 
-func CreateRequest(URL, path, cookie string, headers []config.HeaderConfig) *Request {
+func CreateRequest(baseURL, word string, conf config.RequestConfig) *Request {
 	return &Request{
-		URL:     URL,
-		Path:    path,
-		Cookie:  cookie,
-		Headers: headers,
+		URL:     baseURL,
+		Path:    word,
+		Cookie:  conf.Cookie,
+		Headers: conf.Headers,
 	}
 }

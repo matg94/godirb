@@ -28,6 +28,7 @@ type HeaderConfig struct {
 type WorkerConfig struct {
 	Limiter     LimiterConfig `yaml:"limiter"`
 	WordLists   []string      `yaml:"wordlists"`
+	AppendOnly  bool          `yaml:"append_only"`
 	Append      []string      `yaml:"append"`
 	IgnoreCodes []int         `yaml:"ignore"`
 	Threads     int           `yaml:"max_threads"`

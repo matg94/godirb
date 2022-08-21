@@ -10,7 +10,6 @@ import (
 	"github.com/matg94/godirb/data"
 	"github.com/matg94/godirb/limiter"
 	"github.com/matg94/godirb/logger"
-	"github.com/matg94/godirb/requests"
 	"github.com/matg94/godirb/threads"
 	"github.com/matg94/godirb/timer"
 )
@@ -31,25 +30,22 @@ func CreateLoggers(config *config.AppConfig) (*logger.ThreadSafeLogger, *logger.
 func main() {
 	appConfig := config.LoadConfig("test")
 	successLogger, errorLogger, debugLogger := CreateLoggers(appConfig)
-	requestGenerator := &requests.RequestGenerator{
-		BaseURL: "http://localhost",
-	}
 	wordQueue := data.CreateWordQueue()
 	requestLimiter := limiter.CreateRequestLimiter(appConfig.WorkerConfig.Limiter.RequestsPerSecond, appConfig.WorkerConfig.Limiter.Enabled)
 	threadSafeMap := logger.CreateRequestCounterMap()
 
 	appContext := &context.AppContext{
-		AppConfig:      appConfig,
-		RequestManager: requestGenerator,
-		Queue:          wordQueue,
-		Limiter:        requestLimiter,
-		SuccessLogger:  successLogger,
-		ErrorLogger:    errorLogger,
-		DebugLogger:    debugLogger,
-		ResultMap:      threadSafeMap,
+		AppConfig:     appConfig,
+		BaseURL:       "http://localhost",
+		Queue:         wordQueue,
+		Limiter:       requestLimiter,
+		SuccessLogger: successLogger,
+		ErrorLogger:   errorLogger,
+		DebugLogger:   debugLogger,
+		ResultMap:     threadSafeMap,
 	}
 
-	config.ReadAndCompileWordLists(appContext.Queue, appConfig.WorkerConfig.WordLists, []string{}, appContext.AppConfig.WorkerConfig.Append)
+	config.ReadAndCompileWordLists(appContext.Queue, appConfig.WorkerConfig.WordLists, []string{}, appContext.AppConfig.WorkerConfig.Append, appConfig.WorkerConfig.AppendOnly)
 
 	if appConfig.LoggingConfig.Stats {
 		fmt.Println("-------------------------------")

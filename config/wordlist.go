@@ -8,9 +8,12 @@ import (
 	"github.com/matg94/godirb/data"
 )
 
-func ReadAndCompileWordLists(queue *data.WordQueue, paths []string, words []string, append []string) {
+func ReadAndCompileWordLists(queue *data.WordQueue, paths []string, words []string, append []string, appendOnly bool) {
 	if len(append) > 0 {
 		queue.AddList(AppendWords(words, append))
+		if !appendOnly {
+			queue.AddList(words)
+		}
 	} else {
 		queue.AddList(words)
 	}
@@ -21,6 +24,9 @@ func ReadAndCompileWordLists(queue *data.WordQueue, paths []string, words []stri
 		}
 		if len(append) > 0 {
 			queue.AddList(AppendWords(words, append))
+			if !appendOnly {
+				queue.AddList(words)
+			}
 		} else {
 			queue.AddList(words)
 		}
