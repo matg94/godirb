@@ -28,7 +28,8 @@ func CreateLoggers(config *config.AppConfig) (*logger.ThreadSafeLogger, *logger.
 }
 
 func main() {
-	appConfig := config.LoadConfig("test")
+	parsedFlags := ParseFlags()
+	appConfig := config.LoadConfigWithFlags(parsedFlags)
 	successLogger, errorLogger, debugLogger := CreateLoggers(appConfig)
 	wordQueue := data.CreateWordQueue()
 	requestLimiter := limiter.CreateRequestLimiter(appConfig.WorkerConfig.Limiter.RequestsPerSecond, appConfig.WorkerConfig.Limiter.Enabled)

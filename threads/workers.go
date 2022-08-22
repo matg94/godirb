@@ -56,7 +56,6 @@ func Start(appContext *context.AppContext) {
 	client := &http.Client{
 		Timeout: 5 * time.Second,
 	}
-
 	for i := 0; i < appContext.AppConfig.WorkerConfig.Threads; i++ {
 		wg.Add(1)
 		go Worker(&wg, appContext, i, client)

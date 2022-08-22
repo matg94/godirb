@@ -9,6 +9,17 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+type AppFlags struct {
+	URL      string
+	Profile  string
+	Limiter  float64
+	Threads  int
+	Wordlist string
+	Cookie   string
+	JsonPipe bool
+	OutFile  string
+}
+
 type LimiterConfig struct {
 	Enabled           bool    `yaml:"enabled"`
 	RequestsPerSecond float64 `yaml:"requests_per_second"`
@@ -57,8 +68,7 @@ func LoadConfig(profile string) *AppConfig {
 	if err != nil {
 		log.Fatalf("Could not find user home directory")
 	}
-	// data, err := ReadConfigFile(fmt.Sprintf("%s/.godirb/%s.yaml", user.HomeDir, profile))
-	data, err := ReadConfigFile(fmt.Sprintf("./config/%s.yaml", profile))
+	data, err := ReadConfigFile(fmt.Sprintf("%s%s.yaml", "", profile))
 	if err != nil {
 		log.Fatalf("Could not read config file for profile: %s - %s", profile, err)
 	}
@@ -67,6 +77,34 @@ func LoadConfig(profile string) *AppConfig {
 		log.Fatalf("Could not parse config for profile: %s", profile)
 	}
 	return appConfig
+}
+
+func LoadConfigWithFlags(flags AppFlags) *AppConfig {
+	profileConfig := LoadConfig(flags.Profile)
+	if flags.Limiter != -1 {
+		profileConfig.WorkerConfig.Limiter.RequestsPerSecond = float64(flags.Limiter)
+		profileConfig.WorkerConfig.Limiter.Enabled = true
+	}
+	if flags.Threads != -1 {
+		profileConfig.WorkerConfig.Threads = flags.Threads
+	}
+	if flags.Wordlist != "" {
+		profileConfig.WorkerConfig.WordLists = []string{flags.Wordlist}
+	}
+	if flags.Cookie != "" {
+		profileConfig.RequestConfig.Cookie = flags.Cookie
+	}
+	if flags.JsonPipe {
+		profileConfig.LoggingConfig.Stats = false
+		profileConfig.LoggingConfig.DebugLogger.Live = false
+		profileConfig.LoggingConfig.ErrorLogger.Live = false
+		profileConfig.LoggingConfig.SuccessLogger.Live = false
+		profileConfig.LoggingConfig.SuccessLogger.JsonDump = true
+	}
+	if flags.OutFile != "" {
+		profileConfig.LoggingConfig.SuccessLogger.File = flags.OutFile
+	}
+	return profileConfig
 }
 
 func ReadConfigFile(filepath string) ([]byte, error) {

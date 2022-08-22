@@ -2,8 +2,8 @@ worker:
   limiter:
     enabled: False
     requests_per_second: 30000
-  # wordlists:
-  #   - /home/mat/documents/godirb/config/common.txt
+  wordlists:
+    - /home/mat/documents/godirb/config/common.txt
   # append_only: False
   # append: 
   #   - .html
@@ -24,14 +24,14 @@ requests:
 logging:
   stats: True
   debug_logger:
-    file: ./debug.json
+    file: /dev/null
     json_dump: False
     live: False
   success_logger:
-    file: ./oks.json
+    file: /dev/null
     json_dump: False
     live: True
   error_logger:
-    file: ./errors.json
+    file: /dev/null
     json_dump: False
     live: False
