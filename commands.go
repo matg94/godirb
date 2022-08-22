@@ -15,6 +15,8 @@ func ParseFlags() config.AppFlags {
 	cookie := flag.String("cookie", "", "Cookie string to use")
 	jsonPipe := flag.Bool("pipe", false, "Results will be pipeable in json")
 	outFile := flag.String("out", "", "Path to file to store json results")
+	stats := flag.Bool("stats", false, "Display statistics information")
+	silent := flag.Bool("silent", false, "Displays no live reuqests")
 	flag.Parse()
 
 	return config.AppFlags{
@@ -26,6 +28,8 @@ func ParseFlags() config.AppFlags {
 		Cookie:   *cookie,
 		JsonPipe: *jsonPipe,
 		OutFile:  *outFile,
+		Stats:    *stats,
+		Silent:   *silent,
 	}
 
 }

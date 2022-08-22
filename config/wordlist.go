@@ -2,6 +2,7 @@ package config
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 
@@ -18,7 +19,8 @@ func ReadAndCompileWordLists(queue *data.WordQueue, paths []string, words []stri
 		queue.AddList(words)
 	}
 	for _, path := range paths {
-		words, err := ReadWordlist(path)
+		fullPath := fmt.Sprintf("%s/.godirb/%s", os.Getenv("HOME"), path)
+		words, err := ReadWordlist(fullPath)
 		if err != nil {
 			log.Fatal(err)
 		}

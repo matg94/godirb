@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"os/user"
 
 	"gopkg.in/yaml.v2"
@@ -18,6 +19,8 @@ type AppFlags struct {
 	Cookie   string
 	JsonPipe bool
 	OutFile  string
+	Stats    bool
+	Silent   bool
 }
 
 type LimiterConfig struct {
@@ -42,7 +45,7 @@ type WorkerConfig struct {
 	AppendOnly  bool          `yaml:"append_only"`
 	Append      []string      `yaml:"append"`
 	IgnoreCodes []int         `yaml:"ignore"`
-	Threads     int           `yaml:"max_threads"`
+	Threads     int           `yaml:"threads"`
 }
 
 type LoggingConfig struct {
@@ -68,7 +71,7 @@ func LoadConfig(profile string) *AppConfig {
 	if err != nil {
 		log.Fatalf("Could not find user home directory")
 	}
-	data, err := ReadConfigFile(fmt.Sprintf("%s%s.yaml", "", profile))
+	data, err := ReadConfigFile(fmt.Sprintf("%s/.godirb/%s.yaml", os.Getenv("HOME"), profile))
 	if err != nil {
 		log.Fatalf("Could not read config file for profile: %s - %s", profile, err)
 	}
@@ -104,7 +107,22 @@ func LoadConfigWithFlags(flags AppFlags) *AppConfig {
 	if flags.OutFile != "" {
 		profileConfig.LoggingConfig.SuccessLogger.File = flags.OutFile
 	}
-	return profileConfig
+	if flags.Stats {
+		profileConfig.LoggingConfig.Stats = true
+	}
+	if flags.Silent {
+		profileConfig.LoggingConfig.DebugLogger.Live = false
+		profileConfig.LoggingConfig.ErrorLogger.Live = false
+		profileConfig.LoggingConfig.SuccessLogger.Live = false
+	}
+	return LoadRequiredDefaults(profileConfig)
+}
+
+func LoadRequiredDefaults(config *AppConfig) *AppConfig {
+	if config.WorkerConfig.Threads <= 0 {
+		config.WorkerConfig.Threads = 1
+	}
+	return config
 }
 
 func ReadConfigFile(filepath string) ([]byte, error) {
