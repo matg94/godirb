@@ -15,6 +15,7 @@ func TestGetNextRequest(t *testing.T) {
 		[]string{},
 		[]string{},
 		true,
+		true,
 	)
 
 	req, err := GetNextRequest(queue, "localhost", config.RequestConfig{})
@@ -52,6 +53,7 @@ func TestGetNextRequestErrEmptyQueue(t *testing.T) {
 		[]string{},
 		[]string{},
 		[]string{},
+		true,
 		true,
 	)
 

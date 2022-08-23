@@ -9,7 +9,7 @@ import (
 	"github.com/matg94/godirb/data"
 )
 
-func ReadAndCompileWordLists(queue *data.WordQueue, paths []string, words []string, append []string, appendOnly bool) {
+func ReadAndCompileWordLists(queue *data.WordQueue, paths []string, words []string, append []string, appendOnly, local bool) {
 	if len(append) > 0 {
 		queue.AddList(AppendWords(words, append))
 		if !appendOnly {
@@ -19,7 +19,12 @@ func ReadAndCompileWordLists(queue *data.WordQueue, paths []string, words []stri
 		queue.AddList(words)
 	}
 	for _, path := range paths {
-		fullPath := fmt.Sprintf("%s/.godirb/%s", os.Getenv("HOME"), path)
+		var fullPath string
+		if local {
+			fullPath = path
+		} else {
+			fullPath = fmt.Sprintf("%s/.godirb/%s", os.Getenv("HOME"), path)
+		}
 		words, err := ReadWordlist(fullPath)
 		if err != nil {
 			log.Fatal(err)

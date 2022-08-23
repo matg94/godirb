@@ -13,6 +13,7 @@ import (
 type AppFlags struct {
 	URL      string
 	Profile  string
+	Local    bool
 	Limiter  float64
 	Threads  int
 	Wordlist string
@@ -66,12 +67,17 @@ type AppConfig struct {
 	RequestConfig RequestConfig `yaml:"requests"`
 }
 
-func LoadConfig(profile string) *AppConfig {
+func LoadConfig(profile string, local bool) *AppConfig {
 	_, err := user.Current()
 	if err != nil {
 		log.Fatalf("Could not find user home directory")
 	}
-	data, err := ReadConfigFile(fmt.Sprintf("%s/.godirb/%s.yaml", os.Getenv("HOME"), profile))
+	var data []byte
+	if local {
+		data, err = ReadConfigFile(fmt.Sprintf("%s.yaml", profile))
+	} else {
+		data, err = ReadConfigFile(fmt.Sprintf("%s/.godirb/%s.yaml", os.Getenv("HOME"), profile))
+	}
 	if err != nil {
 		log.Fatalf("Could not read config file for profile: %s - %s", profile, err)
 	}
@@ -83,7 +89,7 @@ func LoadConfig(profile string) *AppConfig {
 }
 
 func LoadConfigWithFlags(flags AppFlags) *AppConfig {
-	profileConfig := LoadConfig(flags.Profile)
+	profileConfig := LoadConfig(flags.Profile, flags.Local)
 	if flags.Limiter != -1 {
 		profileConfig.WorkerConfig.Limiter.RequestsPerSecond = float64(flags.Limiter)
 		profileConfig.WorkerConfig.Limiter.Enabled = true
@@ -115,12 +121,31 @@ func LoadConfigWithFlags(flags AppFlags) *AppConfig {
 		profileConfig.LoggingConfig.ErrorLogger.Live = false
 		profileConfig.LoggingConfig.SuccessLogger.Live = false
 	}
-	return LoadRequiredDefaults(profileConfig)
+	return CheckForBaseRequirements(profileConfig)
 }
 
-func LoadRequiredDefaults(config *AppConfig) *AppConfig {
+func CheckForBaseRequirements(config *AppConfig) *AppConfig {
 	if config.WorkerConfig.Threads <= 0 {
 		config.WorkerConfig.Threads = 1
+	}
+	if len(config.WorkerConfig.WordLists) == 0 {
+		log.Fatal("no worldlists provided either in config or via options")
+		return nil
+	}
+	noSuccessLogger := false
+	noDebugLogger := false
+	noErrorLogger := false
+	if !(config.LoggingConfig.SuccessLogger.Live || config.LoggingConfig.SuccessLogger.JsonDump || config.LoggingConfig.SuccessLogger.File != "") {
+		noSuccessLogger = true
+	}
+	if !(config.LoggingConfig.ErrorLogger.Live || config.LoggingConfig.ErrorLogger.JsonDump || config.LoggingConfig.ErrorLogger.File != "") {
+		noErrorLogger = true
+	}
+	if !(config.LoggingConfig.DebugLogger.Live || config.LoggingConfig.DebugLogger.JsonDump || config.LoggingConfig.DebugLogger.File != "") {
+		noErrorLogger = true
+	}
+	if noSuccessLogger && noDebugLogger && noErrorLogger && !config.LoggingConfig.Stats {
+		config.LoggingConfig.SuccessLogger.Live = true
 	}
 	return config
 }

@@ -15,6 +15,7 @@ func TestReadAndCompileWordlistsWithAppendOnly(t *testing.T) {
 		[]string{"hello2"},
 		[]string{".html"},
 		true,
+		true,
 	)
 
 	expected := []string{
@@ -40,6 +41,7 @@ func TestReadAndCompileWordlistsWithAppend(t *testing.T) {
 		[]string{"hello2"},
 		[]string{".html"},
 		false,
+		true,
 	)
 
 	expected := []string{
@@ -65,9 +67,10 @@ func TestReadAndCompileWordlistsWithoutAppend(t *testing.T) {
 	queue := data.CreateWordQueue()
 	ReadAndCompileWordLists(
 		queue,
-		[]string{"./test.txt"},
+		[]string{"test.txt"},
 		[]string{"hello2"},
 		[]string{},
+		true,
 		true,
 	)
 

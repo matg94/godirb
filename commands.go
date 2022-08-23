@@ -16,12 +16,14 @@ func ParseFlags() config.AppFlags {
 	jsonPipe := flag.Bool("pipe", false, "Results will be pipeable in json")
 	outFile := flag.String("out", "", "Path to file to store json results")
 	stats := flag.Bool("stats", false, "Display statistics information")
-	silent := flag.Bool("silent", false, "Displays no live reuqests")
+	silent := flag.Bool("silent", false, "Displays no live requests")
+	local := flag.Bool("local", false, "All paths relative to current directory")
 	flag.Parse()
 
 	return config.AppFlags{
 		URL:      *url,
 		Profile:  *profile,
+		Local:    *local,
 		Limiter:  *limiter,
 		Threads:  *threads,
 		Wordlist: *wordlist,

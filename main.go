@@ -46,7 +46,14 @@ func main() {
 		ResultMap:     threadSafeMap,
 	}
 
-	config.ReadAndCompileWordLists(appContext.Queue, appConfig.WorkerConfig.WordLists, []string{}, appContext.AppConfig.WorkerConfig.Append, appConfig.WorkerConfig.AppendOnly)
+	config.ReadAndCompileWordLists(
+		appContext.Queue,
+		appConfig.WorkerConfig.WordLists,
+		[]string{},
+		appContext.AppConfig.WorkerConfig.Append,
+		appConfig.WorkerConfig.AppendOnly,
+		parsedFlags.Local,
+	)
 
 	if appConfig.LoggingConfig.Stats {
 		fmt.Println("-------------------------------")
