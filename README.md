@@ -21,6 +21,20 @@ and when running the command, you can pick which file to load,
 
 `godirb -p deep`
 
+### Installation
+
+run `go install github.com/matg94/godirb@latest` to install the CLI.
+
+then copy & pase or download https://raw.githubusercontent.com/matg94/godirb/main/default.yaml,
+and have a `~/.godirb/default.yaml` with its contents.
+
+You should make a copy of the file, and rename it to your profile before making changes.
+`cp ~/.godirb/default.yaml ~/.godirb/newprofile.yaml`.
+
+Make the changes you want to the new profile file, which you can then run using
+
+`godirb -p newprofile -url http://localhost`
+
 ### Yaml Configuration
 
 `default.yaml`
@@ -63,20 +77,6 @@ logging:
 
 The default settings contain a basic configuration, meant to demonstrate the
 godirb features available.
-
-### Installation
-
-run `go install github.com/matg94/godirb@latest` to install the CLI.
-
-then copy & pase or download https://raw.githubusercontent.com/matg94/godirb/main/default.yaml,
-and have a `~/.godirb/default.yaml` with its contents.
-
-You should make a copy of the file, and rename it to your profile before making changes.
-`cp ~/.godirb/default.yaml ~/.godirb/newprofile.yaml`.
-
-Make the changes you want to the new profile file, which you can then run using
-
-`godirb -p newprofile -url http://localhost`
 
 ### Flags
 
