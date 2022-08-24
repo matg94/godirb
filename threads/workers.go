@@ -8,8 +8,16 @@ import (
 	"github.com/matg94/godirb/context"
 	"github.com/matg94/godirb/data"
 	"github.com/matg94/godirb/requests"
-	"github.com/matg94/godirb/util"
 )
+
+func ListContains(val int, arr []int) bool {
+	for _, v := range arr {
+		if val == v {
+			return true
+		}
+	}
+	return false
+}
 
 func Worker(wg *sync.WaitGroup, appContext *context.AppContext, id int, client *http.Client) {
 	for {
@@ -35,7 +43,7 @@ func Worker(wg *sync.WaitGroup, appContext *context.AppContext, id int, client *
 				Location: "getting request response",
 				Error:    err,
 			})
-		} else if code == 404 || util.ListContains(code, appContext.AppConfig.WorkerConfig.IgnoreCodes) {
+		} else if code == 404 || ListContains(code, appContext.AppConfig.WorkerConfig.IgnoreCodes) {
 			appContext.ErrorLogger.Log(&RequestLog{
 				Code:    code,
 				BaseURL: request.URL,

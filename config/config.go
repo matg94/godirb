@@ -11,17 +11,18 @@ import (
 )
 
 type AppFlags struct {
-	URL      string
-	Profile  string
-	Local    bool
-	Limiter  float64
-	Threads  int
-	Wordlist string
-	Cookie   string
-	JsonPipe bool
-	OutFile  string
-	Stats    bool
-	Silent   bool
+	URL        string
+	Profile    string
+	ConfigPath string
+	Local      bool
+	Limiter    float64
+	Threads    int
+	Wordlist   string
+	Cookie     string
+	JsonPipe   bool
+	OutFile    string
+	Stats      bool
+	Silent     bool
 }
 
 type LimiterConfig struct {
@@ -67,14 +68,14 @@ type AppConfig struct {
 	RequestConfig RequestConfig `yaml:"requests"`
 }
 
-func LoadConfig(profile string, local bool) *AppConfig {
+func LoadConfig(profile string, path string) *AppConfig {
 	_, err := user.Current()
 	if err != nil {
 		log.Fatalf("Could not find user home directory")
 	}
 	var data []byte
-	if local {
-		data, err = ReadConfigFile(fmt.Sprintf("%s.yaml", profile))
+	if path != "" {
+		data, err = ReadConfigFile(path)
 	} else {
 		data, err = ReadConfigFile(fmt.Sprintf("%s/.godirb/%s.yaml", os.Getenv("HOME"), profile))
 	}
@@ -89,7 +90,7 @@ func LoadConfig(profile string, local bool) *AppConfig {
 }
 
 func LoadConfigWithFlags(flags AppFlags) *AppConfig {
-	profileConfig := LoadConfig(flags.Profile, flags.Local)
+	profileConfig := LoadConfig(flags.Profile, flags.ConfigPath)
 	if flags.Limiter != -1 {
 		profileConfig.WorkerConfig.Limiter.RequestsPerSecond = float64(flags.Limiter)
 		profileConfig.WorkerConfig.Limiter.Enabled = true

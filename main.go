@@ -35,9 +35,13 @@ func main() {
 	requestLimiter := limiter.CreateRequestLimiter(appConfig.WorkerConfig.Limiter.RequestsPerSecond, appConfig.WorkerConfig.Limiter.Enabled)
 	threadSafeMap := logger.CreateRequestCounterMap()
 
+	if parsedFlags.URL == "" {
+		log.Fatal("no url provided")
+	}
+
 	appContext := &context.AppContext{
 		AppConfig:     appConfig,
-		BaseURL:       "http://localhost",
+		BaseURL:       parsedFlags.URL,
 		Queue:         wordQueue,
 		Limiter:       requestLimiter,
 		SuccessLogger: successLogger,
@@ -52,7 +56,7 @@ func main() {
 		[]string{},
 		appContext.AppConfig.WorkerConfig.Append,
 		appConfig.WorkerConfig.AppendOnly,
-		parsedFlags.Local,
+		len(parsedFlags.Wordlist) > 0,
 	)
 
 	if appConfig.LoggingConfig.Stats {
