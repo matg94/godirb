@@ -95,6 +95,9 @@ func LoadConfigWithFlags(flags AppFlags) *AppConfig {
 		profileConfig.WorkerConfig.Limiter.RequestsPerSecond = float64(flags.Limiter)
 		profileConfig.WorkerConfig.Limiter.Enabled = true
 	}
+	if profileConfig.WorkerConfig.Threads == 0 {
+		profileConfig.WorkerConfig.Threads = 10
+	}
 	if flags.Threads != -1 {
 		profileConfig.WorkerConfig.Threads = flags.Threads
 	}
