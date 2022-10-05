@@ -1,37 +1,13 @@
 worker:
-  limiter:
-    enabled: False
-    requests_per_second: 30000
   wordlists:
     - common.txt
-  append_only: False
-  append: 
-    - .html
-    - .php
-    - .css
-    - .js
   ignore: 
     - 403
     - 401
-  max_threads: 3
-requests:
-  cookie: abcdefg
-  headers:
-  - header: Authorization
-    content: Bearer 123
-  - header: Content-Type
-    content: application/json
+  max_threads: 5
 logging:
   stats: True
-  debug_logger:
-    file: /dev/null
-    json_dump: False
-    live: False
   success_logger:
     file: /dev/null
     json_dump: False
     live: True
-  error_logger:
-    file: /dev/null
-    json_dump: False
-    live: False
