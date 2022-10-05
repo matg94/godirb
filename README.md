@@ -65,8 +65,11 @@ It runs in standard output mode, displaying only successes and showing stats, it
 
 For example,
 
+Command:
+`godirb -url http://localhost:8080 -p default`
+
+Output:
 ```
-godirb -url http://localhost:8080 -p default
 -------------------------------
 Words Generated:  4614
 -------------------------------
@@ -91,6 +94,30 @@ Total Hits: 4614
 Final Rate: 9522 requests per second
 -------------------------------
 ```
+
+You can override profile config by specifying flags, for example:
+
+Command:
+`godirb -url http://localhost:8080 -limiter 2000 -silent`
+
+Output:
+```
+-------------------------------
+Words Generated:  4614
+-------------------------------
+-------------------------------
+Code  | Count
+----- | -----
+200   | 9
+404   | 4601
+403   | 4
+-------------------------------
+Time taken: 2.306208387 seconds
+Total Hits: 4614
+Final Rate: 2000 requests per second
+-------------------------------
+```
+
 ### Flags
 
 In general you should use profiles to set the desired config, as there is more control in the yaml.
@@ -103,7 +130,7 @@ In general, the profile will be loaded, and any flags will be added on top to ed
 
 `-p <profile-name>` is a profile name which needs a `<profile-name>.yaml` file in `~/.godirb`
 
-`-conf <path-to-file>` is a path to a config yaml file, relative to pwd
+`-conf <path-to-file>` is a path to a config yaml file, relative to current directory
 
 `-limiter <int>` is the maximum requests per second allowed
 
