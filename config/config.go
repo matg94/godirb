@@ -23,6 +23,7 @@ type AppFlags struct {
 	OutFile    string
 	Stats      bool
 	Silent     bool
+	Version    bool
 }
 
 type LimiterConfig struct {

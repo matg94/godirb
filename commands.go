@@ -18,6 +18,7 @@ func ParseFlags() config.AppFlags {
 	outFile := flag.String("out", "", "Path to file to store json results")
 	stats := flag.Bool("stats", false, "Display statistics information")
 	silent := flag.Bool("silent", false, "Displays no live requests")
+	version := flag.Bool("version", false, "Displays godirb version")
 	flag.Parse()
 
 	return config.AppFlags{
@@ -32,6 +33,7 @@ func ParseFlags() config.AppFlags {
 		OutFile:    *outFile,
 		Stats:      *stats,
 		Silent:     *silent,
+		Version:    *version,
 	}
 
 }

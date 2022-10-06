@@ -14,6 +14,8 @@ import (
 	"github.com/matg94/godirb/timer"
 )
 
+var version string = "v1.0"
+
 func HandleFatalErr(err error) {
 	if err != nil {
 		log.Fatal(err)
@@ -29,6 +31,10 @@ func CreateLoggers(config *config.AppConfig) (*logger.ThreadSafeLogger, *logger.
 
 func main() {
 	parsedFlags := ParseFlags()
+	if parsedFlags.Version {
+		fmt.Println(version)
+		os.Exit(0)
+	}
 	appConfig := config.LoadConfigWithFlags(parsedFlags)
 	successLogger, errorLogger, debugLogger := CreateLoggers(appConfig)
 	wordQueue := data.CreateWordQueue()
@@ -37,6 +43,7 @@ func main() {
 
 	if parsedFlags.URL == "" {
 		log.Fatal("no url provided")
+		os.Exit(0)
 	}
 
 	appContext := &context.AppContext{
