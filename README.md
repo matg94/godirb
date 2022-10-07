@@ -25,6 +25,20 @@ and when running the command, you can pick which file to load,
 
 ### Installation
 
+## Using the install script
+
+You can install `godirb` using this command:
+
+`curl -s https://raw.githubusercontent.com/matg94/godirb/main/install.sh | sh`
+
+which will run [this script](https://raw.githubusercontent.com/matg94/godirb/main/install.sh) and download the binaries for you.
+This will also download and setup the default config in `~/.godirb`.
+
+You will need to move the binaries to path after that to use it in any directory, for example,
+`sudo mv ./godirb /usr/local/bin/godirb`
+
+## Using go
+
 run `go install github.com/matg94/godirb@latest` to install the CLI.
 
 Optionally copy & pase or download [the default config](https://raw.githubusercontent.com/matg94/godirb/main/default.yaml),

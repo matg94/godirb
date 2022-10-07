@@ -4,4 +4,3 @@ curl -s https://raw.githubusercontent.com/matg94/godirb/main/common.txt > ~/.god
 wget https://github.com/matg94/godirb/releases/download/v1.0/godirb
 
 chmod +x ./godirb
-mv ./godirb /usr/local/bin
